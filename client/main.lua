@@ -223,9 +223,34 @@ local function GetVehicle()
     return vehicle
 end
 
+local function ToggleEngine(veh)
+    if veh then
+	QBCore.Functions.TriggerCallback('qb-vehiclekeys:server:HasKey', function(result)
+		if result then
+		    local EngineOn = GetIsVehicleEngineRunning(GetVehiclePedIsIn(PlayerPedId()))
+		    local vehicle = GetVehiclePedIsIn(PlayerPedId(), true)
+				
+		if EngineOn then
+		    SetVehicleEngineOn(vehicle, false, false, true)
+		else
+		    SetVehicleEngineOn(vehicle, true, false, true)
+		end
+				
+		else
+		QBCore.Functions.Notify(Lang:t("message.no_key"), 'error')
+            end
+	end, QBCore.Functions.GetPlate(veh))
+    end
+end
+
 RegisterKeyMapping('togglelocks', 'Toggle Vehicle Locks', 'keyboard', 'L')
 RegisterCommand('togglelocks', function()
     ToggleVehicleLocks(GetVehicle())
+end)
+
+RegisterKeyMapping('toggleengine', 'Motor Starten', 'keyboard', 'G')
+RegisterCommand('toggleengine', function()
+    ToggleEngine(GetVehicle())
 end)
 
 RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
